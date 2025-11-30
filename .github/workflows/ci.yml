@@ -1,0 +1,38 @@
+name: C CI Pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Build Application
+      run: |
+        chmod +x build.sh
+        ./build.sh
+
+    - name: Run Unit Tests
+      run: |
+        chmod +x test.sh
+        ./test.sh
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: c-app
+        path: build/app
+
+    - name: Simulated Deploy
+      env:
+        DEPLOY_API_KEY: ${{ secrets.DEPLOY_API_KEY }}
+      run: |
+        mkdir deploy
+        echo "Simulating deployment..."
+        echo "Using API Key: ${DEPLOY_API_KEY}"
